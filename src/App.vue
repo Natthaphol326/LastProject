@@ -1,65 +1,51 @@
 <template>
-  <div id="app">
-    <nav class="navbar" :class="{ onScroll: !view.topOfPage }">
-      <div class="inner-width">
-        <a href="/home" class="logo"></a>
-        <button class="menu-toggler">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-        <div class="navbar-menu">
-          <a href="#">Home</a>
-          <a href="#">About</a>
-          <a href="#">Services</a>
-          <a href="#">Education</a>
-          <a href="#">Works</a>
-          <a href="#">Contact</a>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Home -->
-    <section id="home">
-      <div class="inner-width">
-        <div class="content">
-          <h1></h1>
-          <div class="sm">
-            <a href="#" class="fab fa-facebook-f"></a>
-            <a href="#" class="fab fa-twitter"></a>
-            <a href="#" class="fab fa-instagram"></a>
-            <a href="#" class="fab fa-linkedin-in"></a>
-            <a href="#" class="fab fa-youtube"></a>
-          </div>
-          <div class="buttons">
-            <a href="/about">Contact me</a>
-            <a href="#">Download CV</a>
+  <v-app>
+    <div id="app">
+      <nav class="navbar" :class="{ onScroll: !view.topOfPage }">
+        <div class="inner-width" name="navigation">
+          <a href="/home" class="logo"></a>
+          <button
+            class="menu-toggler"
+            @click="toggle()"
+            :class="{ active: !mobileNav }"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <div
+            class="navbar-menu"
+            v-show="!mobile"
+            :class="{ active: !mobileNav }"
+          >
+            <a href="/home">Home</a>
+            <a href="/product">About</a>
+            <a href="#">Services</a>
+            <a href="#">Education</a>
+            <a href="#">Works</a>
+            <a href="#">Contact</a>
+            <a v-if="LoginActive == true" href="/login" v-show="LoginActive"
+              >Sign In</a
+            >
+            <a v-if="LoginActive != true" href="/login">Logout</a>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Home -->
-    <section id="home" name="about">
-      <div class="inner-width">
-        <div class="section-title">
-          <h1>About Me</h1>
-          <div>
-            <PicTure />
-          </div>
-        </div>
-      </div>
-    </section>
-    <MenuBar />
-  </div>
+      </nav>
+      <v-main>
+        <router-view />
+      </v-main>
+    </div>
+  </v-app>
 </template>
 
 <script>
-import MenuBar from "@/components/MunuBar.vue";
-import PicTure from "@/components/PicTure.vue";
 export default {
+  namme: "navigation",
   data() {
     return {
+      LoginActive: true,
+      mobileNav: true,
+      show: this.$store.state.show,
       view: {
         topOfPage: true,
       },
@@ -70,25 +56,26 @@ export default {
   },
   methods: {
     handleScroll() {
-      if (window.pageYOffset > 0) {
+      if (window.pageYOffset > 20) {
         if (this.view.topOfPage) this.view.topOfPage = false;
+        this.$("navbar").addClass("sticky");
       } else {
-        if (!this.view.topOfPage) this.view.topOfPage = true;
+        if (!this.view.topOfPage)
+          this.view.topOfPage = this.view.topOfPage = true;
+        this.$("navbar").removeClass("sticky");
       }
     },
-  },
-  components: {
-    MenuBar,
-    PicTure,
+    toggle() {
+      this.mobileNav = !this.mobileNav;
+    },
   },
 };
 </script>
 
 <style lang="scss">
 @import url("https://use.fontawesome.com/releases/v5.9.0/css/all.css");
-
-* {
-  font-size: 1rem;
+body {
+  background-color: rgba($color: #868484, $alpha: 1);
 }
 * {
   margin: 0;
@@ -105,11 +92,22 @@ export default {
   padding: 30px 0;
   top: 0;
   z-index: 999;
-  transition: 0.3s linear;
+  transition: 0.2s linear;
   &.onScroll {
-    background-color: #fff;
-    ul li {
-      color: #10b761;
+    background-color: white;
+    .logo {
+      background-image: url("../src/assets/black-logo.png");
+    }
+    .navbar-menu a {
+      color: black;
+    }
+    .menu-toggler span {
+      background-color: #111;
+    }
+    @media screen and (max-width: 980px) {
+      .navbar-menu {
+        background-color: #f1f1f1;
+      }
     }
   }
 }
@@ -129,7 +127,7 @@ export default {
 .logo {
   width: 44px;
   height: 32px;
-  background-image: url("../src/assets/white-logo.png");
+  background-image: url(../src/assets/white-logo.png);
   background-size: contain;
 }
 
@@ -169,22 +167,19 @@ export default {
   background-color: #fff;
   padding: 18px 0;
 }
+
+.sticky .logo {
+  background-image: url(../src/assets/black-logo.png);
+}
+
 .sticky .navbar-menu a {
   color: #111;
 }
 
-.sticky .menu-toggler span {
-  background-color: #111;
-}
-
-.sticky .logo {
-  background-image: url("../src/assets/black-logo.png");
-}
-
 #home {
-  height: 100vh;
+  height: auto;
   min-height: 500px;
-  background: url("../src/assets/bg.jpg") no-repeat center;
+  background: url(../src/assets/bg.jpg) no-repeat center;
   background-size: cover;
   background-attachment: fixed;
 }
@@ -207,27 +202,20 @@ export default {
   margin-bottom: 60px;
 }
 
-#home .inner-width h1 {
-  width: 100%;
-  color: #fff;
-  font-size: 60px;
-  margin-bottom: 60px;
-}
-
 #home .content h1::after {
-  content: "Welcome To";
+  content: "Darkcode";
   animation: textanim 10s linear infinite;
 }
 
 @keyframes textanim {
   25% {
-    content: "Pet Shop";
+    content: "A Developer";
   }
   50% {
-    content: "We have food";
+    content: "A Designer";
   }
   75% {
-    content: "And many more";
+    content: "A Youtuber";
   }
 }
 
@@ -286,10 +274,6 @@ export default {
     display: block;
     font-size: 30px;
     margin: 30px 0;
-  }
-
-  .sticky .navbar-menu {
-    background-color: #f1f1f1;
   }
 
   .navbar-menu.active {

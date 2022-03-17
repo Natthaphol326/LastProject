@@ -4,9 +4,15 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
+  state: {
+    show: true,
+  },
   getters: {},
-  mutations: {},
+  mutations: {
+    getShow: (state, n) => {
+      state.show = n;
+    },
+  },
   actions: {},
   modules: {},
 });
